@@ -136,7 +136,8 @@ export const CameraView: React.FC<CameraViewProps> = ({ onCapture }) => {
       </div>
 
       {/* Controls - High Z-Index */}
-      <div className="absolute bottom-24 w-full flex justify-center items-center z-50 pointer-events-auto">
+      {/* Moved to bottom-8 because the container is now shorter due to App layout changes */}
+      <div className="absolute bottom-8 w-full flex justify-center items-center z-50 pointer-events-auto">
          {/* Shutter Button */}
          <button 
           onClick={handleCapture}

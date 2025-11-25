@@ -120,15 +120,15 @@ const App: React.FC = () => {
   return (
     <div className="h-[100dvh] w-full bg-black text-white overflow-hidden flex flex-col font-sans">
       
-      {/* Main Content Area */}
-      <div className="flex-1 relative overflow-hidden">
+      {/* Main Content Area - Padded bottom to avoid overlap with fixed nav */}
+      <div className={`relative w-full ${view !== ViewState.DETAIL ? 'h-[calc(100dvh-6rem)] pb-0' : 'h-full'}`}>
         {view === ViewState.CAMERA && (
           <CameraView onCapture={handleCapture} />
         )}
         
         {view === ViewState.GALLERY && (
            <>
-              <div className="absolute top-0 w-full z-10 p-5 bg-black/95 border-b border-zinc-800 flex justify-between items-center">
+              <div className="absolute top-0 w-full z-10 p-5 bg-black/95 border-b border-zinc-800 flex justify-between items-center shadow-md">
                   <h1 className="text-sm font-bold tracking-widest text-white uppercase">History</h1>
               </div>
               <GalleryView photos={photos} onSelect={openDetail} onClearHistory={handleClearHistory} />
@@ -144,12 +144,12 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* Sticky Bottom Nav - Hide when in Detail view */}
+      {/* Fixed Sticky Bottom Nav */}
       {view !== ViewState.DETAIL && (
-        <div className="h-24 shrink-0 bg-black border-t border-zinc-800 flex justify-around items-center px-8 z-30 pb-6">
+        <div className="fixed bottom-0 left-0 w-full h-24 bg-black border-t border-zinc-800 flex justify-around items-start pt-4 z-[100] shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
           <button 
             onClick={() => setView(ViewState.CAMERA)}
-            className={`flex flex-col items-center gap-2 transition-all duration-300 ${view === ViewState.CAMERA ? 'text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+            className={`flex flex-col items-center gap-2 p-2 transition-all duration-300 cursor-pointer ${view === ViewState.CAMERA ? 'text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
           >
             <Camera size={26} strokeWidth={view === ViewState.CAMERA ? 2.5 : 2} />
             <span className="text-[10px] font-bold tracking-widest uppercase">Scanner</span>
@@ -157,7 +157,7 @@ const App: React.FC = () => {
 
           <button 
              onClick={() => setView(ViewState.GALLERY)}
-             className={`flex flex-col items-center gap-2 transition-all duration-300 ${view === ViewState.GALLERY ? 'text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+             className={`flex flex-col items-center gap-2 p-2 transition-all duration-300 cursor-pointer ${view === ViewState.GALLERY ? 'text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
           >
             <History size={26} strokeWidth={view === ViewState.GALLERY ? 2.5 : 2} />
             <span className="text-[10px] font-bold tracking-widest uppercase">History</span>

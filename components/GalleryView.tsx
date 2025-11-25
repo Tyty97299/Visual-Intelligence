@@ -22,7 +22,7 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ photos, onSelect, onCl
   }
 
   return (
-    <div className="h-full overflow-y-auto pb-24 pt-20 px-4 font-sans">
+    <div className="h-full overflow-y-auto pt-20 px-4 font-sans pb-4">
       <div className="flex justify-between items-end mb-4 pb-2 max-w-7xl mx-auto w-full">
         <span className="text-xs text-zinc-500 font-medium">{photos.length} ITEMS</span>
         <button 
