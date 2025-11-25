@@ -1,0 +1,7 @@
+{
+  "name": "Visual Intelligence",
+  "description": "Advanced AI vision system. Analyze reality, query visual data, and access global knowledge nodes.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
