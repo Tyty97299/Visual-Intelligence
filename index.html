@@ -6,14 +6,32 @@
     <title>Visual Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* Hide scrollbar for Chrome, Safari and Opera */
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
+      /* Mobile: Hide scrollbar */
+      @media (pointer: coarse) {
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       }
-      /* Hide scrollbar for IE, Edge and Firefox */
-      .no-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
+
+      /* PC: Sleek scrollbar */
+      @media (pointer: fine) {
+        ::-webkit-scrollbar {
+          width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #27272a;
+          border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #3f3f46;
+        }
       }
       
       /* Futuristic scanline effect */

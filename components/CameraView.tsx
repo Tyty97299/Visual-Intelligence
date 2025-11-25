@@ -11,8 +11,6 @@ export const CameraView: React.FC<CameraViewProps> = ({ onCapture }) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string>('');
   const [flashEffect, setFlashEffect] = useState(false);
-  // Default to environment (rear) camera
-  const facingMode = 'environment';
 
   const startCamera = useCallback(async () => {
     try {
@@ -20,33 +18,41 @@ export const CameraView: React.FC<CameraViewProps> = ({ onCapture }) => {
         stream.getTracks().forEach(track => track.stop());
       }
 
-      const constraints = {
-        video: {
-          facingMode: facingMode,
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
-        },
-        audio: false
-      };
+      // Try environment camera first (mobile)
+      try {
+        const constraints = {
+          video: {
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: false
+        };
+        const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+        setStream(newStream);
+        if (videoRef.current) {
+            videoRef.current.srcObject = newStream;
+        }
+        setError('');
+        return;
+      } catch (e) {
+        console.warn("Environment camera failed, trying fallback", e);
+      }
 
-      const newStream = await navigator.mediaDevices.getUserMedia(constraints);
-      setStream(newStream);
-      
+      // Fallback to any available video source (PC/Laptop)
+      const fallbackStream = await navigator.mediaDevices.getUserMedia({ 
+          video: true,
+          audio: false 
+      });
+      setStream(fallbackStream);
       if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
+          videoRef.current.srcObject = fallbackStream;
       }
       setError('');
+
     } catch (err) {
       console.error("Camera error:", err);
-      // Fallback to any camera if environment fails
-      try {
-         const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
-         setStream(fallbackStream);
-         if (videoRef.current) videoRef.current.srcObject = fallbackStream;
-         setError('');
-      } catch (e) {
-         setError("System malfunction: Camera access denied.");
-      }
+      setError("Camera access denied or unavailable.");
     }
   }, []);
 
@@ -96,14 +102,14 @@ export const CameraView: React.FC<CameraViewProps> = ({ onCapture }) => {
 
       {/* Error State */}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/90 z-50 p-6 text-center border-2 border-red-500/20 m-4 rounded-lg backdrop-blur">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/90 z-[60] p-6 text-center border-2 border-red-500/20 m-4 rounded-lg backdrop-blur">
           <div>
             <p className="text-red-500 mb-6 text-lg font-bold tracking-widest uppercase">{error}</p>
             <button 
               onClick={startCamera}
-              className="px-8 py-3 bg-red-500/10 border border-red-500 text-red-500 font-bold hover:bg-red-500/20 transition-all uppercase tracking-wider"
+              className="px-8 py-3 bg-red-500/10 border border-red-500 text-red-500 font-bold hover:bg-red-500/20 transition-all uppercase tracking-wider cursor-pointer"
             >
-              Reinitialize
+              Retry Connection
             </button>
           </div>
         </div>
@@ -114,7 +120,7 @@ export const CameraView: React.FC<CameraViewProps> = ({ onCapture }) => {
         className={`absolute inset-0 bg-white pointer-events-none transition-opacity duration-150 ${flashEffect ? 'opacity-80' : 'opacity-0'} z-20`}
       />
 
-      {/* HUD Overlays */}
+      {/* HUD Overlays - Low Z-Index */}
       <div className="absolute inset-0 pointer-events-none p-6 z-10 flex flex-col justify-between">
          {/* Top HUD */}
          <div className="flex justify-between items-start">
@@ -129,16 +135,16 @@ export const CameraView: React.FC<CameraViewProps> = ({ onCapture }) => {
          </div>
       </div>
 
-      {/* Controls */}
-      <div className="absolute bottom-24 w-full flex justify-center items-center z-10 pointer-events-auto">
+      {/* Controls - High Z-Index */}
+      <div className="absolute bottom-24 w-full flex justify-center items-center z-50 pointer-events-auto">
          {/* Shutter Button */}
          <button 
           onClick={handleCapture}
-          className="group relative h-20 w-20 flex items-center justify-center"
+          className="group relative h-20 w-20 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
          >
            <div className="absolute inset-0 rounded-full border-2 border-cyan-500/50 group-hover:border-cyan-400/80 transition-colors" />
            <div className="absolute inset-1 rounded-full border border-cyan-500/30 group-hover:scale-95 transition-transform duration-300" />
-           <div className="h-16 w-16 bg-cyan-500/20 backdrop-blur-sm rounded-full border-2 border-cyan-400 flex items-center justify-center group-active:bg-cyan-400 group-active:scale-95 transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)]">
+           <div className="h-16 w-16 bg-cyan-500/20 backdrop-blur-sm rounded-full border-2 border-cyan-400 flex items-center justify-center group-active:bg-cyan-400 transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)]">
               <Aperture size={28} className="text-cyan-200 group-active:text-black" />
            </div>
          </button>

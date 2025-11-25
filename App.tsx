@@ -4,7 +4,7 @@ import { GalleryView } from './components/GalleryView';
 import { PhotoDetail } from './components/PhotoDetail';
 import { Photo, ViewState } from './types';
 import { analyzeImage, askAboutImage } from './services/geminiService';
-import { Camera, History, LayoutGrid } from 'lucide-react';
+import { Camera, History } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 const App: React.FC = () => {
@@ -118,7 +118,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen bg-black text-white overflow-hidden flex flex-col font-sans">
+    <div className="h-[100dvh] w-full bg-black text-white overflow-hidden flex flex-col font-sans">
       
       {/* Main Content Area */}
       <div className="flex-1 relative overflow-hidden">
@@ -146,7 +146,7 @@ const App: React.FC = () => {
 
       {/* Sticky Bottom Nav - Hide when in Detail view */}
       {view !== ViewState.DETAIL && (
-        <div className="h-24 bg-black border-t border-zinc-800 flex justify-around items-center px-8 z-30 pb-6">
+        <div className="h-24 shrink-0 bg-black border-t border-zinc-800 flex justify-around items-center px-8 z-30 pb-6">
           <button 
             onClick={() => setView(ViewState.CAMERA)}
             className={`flex flex-col items-center gap-2 transition-all duration-300 ${view === ViewState.CAMERA ? 'text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
